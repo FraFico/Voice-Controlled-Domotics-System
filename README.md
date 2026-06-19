@@ -1,63 +1,71 @@
-# Domotica vocale 🏠🎤
+# Voice-Controlled Home Automation 🏠🎤
 
-Assistente domestico a comando vocale: parli, un modello **OpenAI** interpreta
-la richiesta, l'azione viene eseguita sulla casa virtuale (luci, TV, finestre,
-porte, termostato) e l'assistente conferma a voce con la voce **Isabella**
-(Azure Speech). Se l'azione non è possibile, ti avvisa.
+Built with Azure Speech Services and OpenAI for natural language smart home control.
 
-## Come funziona
+> ⚠️ **Important Notice**
+>
+> This project requires:
+>
+> - **Azure Speech Services** for speech-to-text and text-to-speech functionality.
+> - **OpenAI or Azure OpenAI** for natural language understanding and command interpretation.
+>
+> These services are **mandatory**. The application will not function correctly without valid credentials configured in the `.env` file.
 
-```
-   voce ──► az_speech (speech-to-text)
-                │  testo
+A voice-controlled smart home assistant: the user speaks, an **OpenAI** model interprets the request, the action is executed on a virtual home (lights, TV, windows, doors, thermostat), and the assistant confirms the result using **Isabella**, an Azure Speech voice. If the requested action cannot be performed, the assistant provides feedback.
+
+## How It Works
+
+```text
+   voice ──► az_speech (speech-to-text)
+                │  text
                 ▼
-        chiamata_chat ──► il modello OpenAI interpreta (JSON)
+        chiamata_chat ──► OpenAI interprets the command (JSON)
                 │  intent
                 ▼
-           sistema ──► esegue l'azione sulla casa
-                │  risposta
+           sistema ──► executes the action on the virtual home
+                │  response
                 ▼
-        az_speech (text-to-speech, voce Isabella) ──► voce
+        az_speech (text-to-speech, Isabella voice) ──► voice
 ```
 
-## File
+## Files
 
-| File | Ruolo |
-|------|-------|
-| `classi.py` | Modello dati: `Device`, `Stanza`, `Casa` |
-| `sistema.py` | Logica: costruisce la casa, istruzioni per il modello, esegue le azioni |
-| `chiamata_chat.py` | Chiamata al modello OpenAI (comando → JSON) |
-| `az_speech.py` | Voce: speech-to-text e text-to-speech (Azure) |
-| `main.py` | Punto di ingresso (il loop) |
+| File | Purpose |
+|------|---------|
+| `classi.py` | Data model: `Device`, `Room`, `House` |
+| `sistema.py` | Core logic: builds the house, generates model instructions, and executes actions |
+| `chiamata_chat.py` | OpenAI API interaction (command → JSON) |
+| `az_speech.py` | Voice interface: speech-to-text and text-to-speech using Azure Speech |
+| `main.py` | Application entry point (main loop) |
 
 ## Setup
 
 ```bash
-# 1) dipendenze
+# 1) Install dependencies
 pip install -r requirements.txt
 
-# 2) credenziali: copia l'esempio e riempi i valori
+# 2) Copy the example configuration file and fill in your credentials
 cp .env.example .env
 ```
 
-Servono le credenziali **Azure Speech** (`AZ_SPEECH_*`) e **OpenAI / Azure AI**
-(`AI_KEY`, `AI_ENDPOINT`, `AI_MODEL`). Il file `.env` è ignorato da git: le
-credenziali reali non finiscono mai nel repository.
+The application requires **Azure Speech** credentials (`AZ_SPEECH_*`) and **OpenAI / Azure OpenAI** credentials (`AI_KEY`, `AI_ENDPOINT`, `AI_MODEL`).
 
-## Avvio
+The `.env` file is ignored by Git, ensuring that real credentials are never committed to the repository.
 
-Dalla cartella `domotica/`:
+## Run
+
+From the project directory:
 
 ```bash
-python main.py                  # modalità voce (richiede il microfono)
-MODO_VOCE=False python main.py  # modalità testo (tastiera, senza microfono)
+python main.py                  # Voice mode (microphone required)
+MODO_VOCE=False python main.py  # Text mode (keyboard only)
 ```
 
-## Esempi di comandi
+## Example Commands
 
-- "accendi la luce del salotto"
-- "apri la finestra della camera"
-- "chiudi la porta"
-- "ho freddo in camera"  → alza il termostato
-- "che stato ha la casa?" → elenca lo stato di tutti i dispositivi
-- "esci" → termina
+- "turn on the living room light"
+- "open the bedroom window"
+- "close the door"
+- "I'm cold in the bedroom" → increases the thermostat temperature
+- "what is the status of the house?" → lists the status of all devices
+- "exit" → closes the application
